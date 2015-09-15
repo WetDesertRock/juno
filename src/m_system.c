@@ -6,9 +6,11 @@
  */
 
 
+#include <stdint.h>
 #include <SDL/SDL.h>
 #include "util.h"
 #include "luax.h"
+
 
 #if _WIN32
   #include <windows.h>
@@ -102,7 +104,8 @@ static int l_system_poll(lua_State *L) {
         luax_setfield_string(L, "type", "joyaxismotion");
         luax_setfield_number(L, "joystick", e.jaxis.which);
         luax_setfield_number(L, "axis", e.jaxis.axis);
-        luax_setfield_number(L, "value", e.jaxis.value);
+        int value = e.jaxis.value;
+        luax_setfield_number(L, "value", ((double)value+0.5f)/(INT16_MAX+0.5f));
         break;
 
       case SDL_JOYBALLMOTION:

@@ -6,6 +6,7 @@
  */
 
 
+#include <stdint.h>
 #include <SDL/SDL.h>
 #include "luax.h"
 #include "m_joystick.h"
@@ -59,7 +60,9 @@ static int l_joystick_getButtonCount(lua_State *L) {
 static int l_joystick_getAxis(lua_State *L) {
   Joystick *self = luaL_checkudata(L, 1, CLASS_NAME);
   int idx = luaL_checknumber(L, 2);
-  lua_pushnumber(L, SDL_JoystickGetAxis(self->joystick,idx));
+  /* Ugly normalization from int16 to double -1-1 */
+  int value = SDL_JoystickGetAxis(self->joystick,idx);
+  lua_pushnumber(L, ((double)value+0.5f)/(INT16_MAX+0.5f));
   return 1;
 }
 
