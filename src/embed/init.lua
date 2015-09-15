@@ -72,19 +72,19 @@ local eventHandlers = {
     end,
   --TODO: Make e.joystick an actual joystick.
   joyaxismotion = function(e)
-    call(juno.onJoyAxisMotion, e.joystick, e.axis, e.button)
+    call(juno.onJoyAxisMotion, juno.joystick.joysticks[e.joystick+1], e.axis, e.button)
     end,
   joyballmotion = function(e)
-    call(juno.onJoyBallMotion, e.joystick, e.ball, e.x, e.y)
+    call(juno.onJoyBallMotion, juno.joystick.joysticks[e.joystick+1], e.ball, e.x, e.y)
     end,
   joybuttondown = function(e)
-    call(juno.onJoyButtonDown, e.joystick, e.button)
+    call(juno.onJoyButtonDown, juno.joystick.joysticks[e.joystick+1], e.button)
     end,
   joybuttonup = function(e)
-    call(juno.onJoyButtonUp, e.joystick, e.button)
+    call(juno.onJoyButtonUp, juno.joystick.joysticks[e.joystick+1], e.button)
     end,
   joyhatmotion = function(e)
-    call(juno.onJoyHatMotion, e.joystick, e.hat, e.state)
+    call(juno.onJoyHatMotion, juno.joystick.joysticks[e.joystick+1], e.hat, e.state)
     end,
   quit = function(e)
     call(juno.onQuit)
@@ -281,6 +281,12 @@ juno.graphics.setMaxFps(config.maxfps)
 juno.graphics.setClearColor(0, 0, 0)
 juno.audio.init(config.samplerate, config.buffersize)
 juno.joystick.init()
+
+--Open all of our joysticks and store them.
+juno.joystick.joysticks = {}
+for i=0,juno.joystick.getCount()-1 do
+  table.insert(juno.joystick.joysticks,juno.joystick.open(i))
+end
 
 
 -------------------------------------------------------------------------------
