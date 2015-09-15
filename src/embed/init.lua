@@ -70,6 +70,22 @@ local eventHandlers = {
     call(juno.mouse._onEvent, e)
     call(juno.onMouseUp, e.x, e.y, e.button)
     end,
+  --TODO: Make e.joystick an actual joystick.
+  joyaxismotion = function(e)
+    call(juno.onJoyAxisMotion, e.joystick, e.axis, e.button)
+    end,
+  joyballmotion = function(e)
+    call(juno.onJoyBallMotion, e.joystick, e.ball, e.x, e.y)
+    end,
+  joybuttondown = function(e)
+    call(juno.onJoyButtonDown, e.joystick, e.button)
+    end,
+  joybuttonup = function(e)
+    call(juno.onJoyButtonUp, e.joystick, e.button)
+    end,
+  joyhatmotion = function(e)
+    call(juno.onJoyHatMotion, e.joystick, e.hat, e.state)
+    end,
   quit = function(e)
     call(juno.onQuit)
     os.exit()
@@ -127,7 +143,7 @@ end
 function juno.onError(msg, stacktrace)
   -- Create and print error string
   local tab = "    "
-  local str = 
+  local str =
     msg:gsub("\t", tab):gsub("\n+$", "") .. "\n\n" ..
     stacktrace:gsub("\t", tab)
   print("Error:\n" .. str)
@@ -142,13 +158,13 @@ function juno.onError(msg, stacktrace)
 
   --  Init error state
   local font, bigfont
-  local done = false 
+  local done = false
   local alpha = 0
 
   function juno.onUpdate()
     -- The initialisation of the error state's graphics is defered to the
     -- first onUpdate() call in case the error occurs in the audio thread in
-    -- which case it won't be able to change the openGL state 
+    -- which case it won't be able to change the openGL state
     juno.graphics.reset()
     juno.graphics.setClearColor(.15, .16, .2)
     font = juno.Font.fromEmbedded(14)
@@ -164,7 +180,7 @@ function juno.onError(msg, stacktrace)
   end
 
   function juno.onAudio() end
-   
+
   function juno.onDraw()
     juno.graphics.setAlpha(alpha)
     juno.graphics.drawText(bigfont, "Error", 40, 40)
@@ -220,7 +236,7 @@ package.path = package.path .. ";?/init.lua"
 
 
 -------------------------------------------------------------------------------
--- Init config    
+-- Init config
 -------------------------------------------------------------------------------
 
 local c = {}
@@ -256,7 +272,7 @@ juno.fs.mount(path)
 
 
 -------------------------------------------------------------------------------
--- Init modules   
+-- Init modules
 -------------------------------------------------------------------------------
 
 juno.graphics.init(config.width, config.height, config.title,
@@ -264,10 +280,11 @@ juno.graphics.init(config.width, config.height, config.title,
 juno.graphics.setMaxFps(config.maxfps)
 juno.graphics.setClearColor(0, 0, 0)
 juno.audio.init(config.samplerate, config.buffersize)
+juno.joystick.init()
 
 
 -------------------------------------------------------------------------------
--- Init project   
+-- Init project
 -------------------------------------------------------------------------------
 
 if juno.fs.exists("main.lua") then
@@ -283,14 +300,14 @@ else
 
   function juno.onLoad()
     juno.graphics.setClearColor(0.15, 0.15, 0.15)
-    for i = 1, 30 do 
+    for i = 1, 30 do
       local p = {
         x = 0,
         y = (i / 30) * 100,
         z = 0,
         r = (i / 30) * 2,
       }
-      table.insert(particles, p) 
+      table.insert(particles, p)
     end
   end
 
@@ -338,4 +355,3 @@ else
 end
 
 xpcall(function() call(juno.onLoad) end, onError)
-

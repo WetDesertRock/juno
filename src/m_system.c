@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2015 rxi
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -97,6 +97,46 @@ static int l_system_poll(lua_State *L) {
         luax_setfield_number(L, "x", e.button.x);
         luax_setfield_number(L, "y", e.button.y);
         break;
+
+      case SDL_JOYAXISMOTION:
+        luax_setfield_string(L, "type", "joyaxismotion");
+        luax_setfield_number(L, "joystick", e.jaxis.which);
+        luax_setfield_number(L, "axis", e.jaxis.axis);
+        luax_setfield_number(L, "value", e.jaxis.value);
+        break;
+
+      case SDL_JOYBALLMOTION:
+        luax_setfield_string(L, "type", "joyballmotion");
+        luax_setfield_number(L, "joystick", e.jball.which);
+        luax_setfield_number(L, "ball", e.jball.ball);
+        luax_setfield_number(L, "x", e.jball.xrel);
+        luax_setfield_number(L, "y", e.jball.yrel);
+        break;
+
+      case SDL_JOYBUTTONDOWN:
+        luax_setfield_string(L, "type", "joybuttondown");
+        luax_setfield_number(L, "joystick", e.jbutton.which);
+        luax_setfield_number(L, "button", e.jbutton.button);
+        break;
+
+      case SDL_JOYBUTTONUP:
+        luax_setfield_string(L, "type", "joybuttonup");
+        luax_setfield_number(L, "joystick", e.jbutton.which);
+        luax_setfield_number(L, "button", e.jbutton.button);
+        break;
+
+      case SDL_JOYHATMOTION:
+        luax_setfield_string(L, "type", "joyhatmotion");
+        luax_setfield_number(L, "joystick", e.jhat.which);
+        luax_setfield_number(L, "hat", e.jhat.hat);
+
+        lua_newtable(L); /* e.state */
+        luax_setfield_bool(L, "up", e.jhat.value & SDL_HAT_UP);
+        luax_setfield_bool(L, "down", e.jhat.value & SDL_HAT_DOWN);
+        luax_setfield_bool(L, "left", e.jhat.value & SDL_HAT_LEFT);
+        luax_setfield_bool(L, "right", e.jhat.value & SDL_HAT_RIGHT);
+        lua_setfield(L, -2, "state"); /* push state to event table */
+        break;
     }
 
     /* Push event to events table */
@@ -123,9 +163,9 @@ static int l_system_info(lua_State *L) {
   if (!strcmp(str, "os")) {
 #if _WIN32
     lua_pushstring(L, "windows");
-#elif __linux__ 
+#elif __linux__
     lua_pushstring(L, "linux");
-#elif __FreeBSD__ 
+#elif __FreeBSD__
     lua_pushstring(L, "bsd");
 #elif __APPLE__
     lua_pushstring(L, "osx");

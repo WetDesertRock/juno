@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2015 rxi
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -30,6 +30,9 @@ int luaopen_font(lua_State *L);
 int luaopen_source(lua_State *L);
 int luaopen_data(lua_State *L);
 
+int luaopen_joystick(lua_State *L);
+int luaopen_joystick_functions(lua_State *L);
+
 int luaopen_juno(lua_State *L) {
   luaL_Reg reg[] = {
     { "getVersion",  l_juno_getVersion  },
@@ -45,14 +48,16 @@ int luaopen_juno(lua_State *L) {
     { "Buffer",   luaopen_buffer    },
     { "Source",   luaopen_source    },
     { "Data",     luaopen_data      },
+    { "Joystick", luaopen_joystick  },
     /* Modules */
-    { "system",   luaopen_system    },
-    { "fs",       luaopen_fs        },
-    { "time",     luaopen_time      },
-    { "graphics", luaopen_graphics  },
-    { "audio",    luaopen_audio     },
-    { "mouse",    luaopen_mouse     },
-    { "bufferfx", luaopen_bufferfx  },
+    { "joystick", luaopen_joystick_functions  },
+    { "system",   luaopen_system              },
+    { "fs",       luaopen_fs                  },
+    { "time",     luaopen_time                },
+    { "graphics", luaopen_graphics            },
+    { "audio",    luaopen_audio               },
+    { "mouse",    luaopen_mouse               },
+    { "bufferfx", luaopen_bufferfx            },
     { NULL, NULL },
   };
   for (i = 0; mods[i].name; i++) {
