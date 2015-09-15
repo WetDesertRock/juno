@@ -117,9 +117,15 @@ static int l_joystick_getName(lua_State *L) {
 
 static int l_joystick_open(lua_State *L) {
   int idx = luaL_checknumber(L, 1);
-  Joystick *self = joystick_new(L);
+  Joystick *self;
+
+  if (idx < 0 || idx >= SDL_NumJoysticks()) { /* Try to avoid the SDL error */
+    luaL_error(L, "Invalid joystick id: %d", idx);
+  }
+  self = joystick_new(L);
   self->joystick = SDL_JoystickOpen(idx);
-  if (self->joystick == NULL) {
+
+  if (self->joystick == NULL) { /* Oh well, we error anyways */
     luaL_error(L, "Could not open game controller. Error: %s", SDL_GetError());
     return 0;
   }
