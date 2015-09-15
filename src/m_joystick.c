@@ -90,7 +90,7 @@ static int l_joystick_getHat(lua_State *L) {
 static int l_joystick_getButton(lua_State *L) {
   Joystick *self = luaL_checkudata(L, 1, CLASS_NAME);
   int idx = luaL_checknumber(L, 2);
-  lua_pushnumber(L, SDL_JoystickGetButton(self->joystick,idx));
+  lua_pushboolean(L, SDL_JoystickGetButton(self->joystick,idx));
   return 1;
 }
 
